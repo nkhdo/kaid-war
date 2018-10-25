@@ -10,7 +10,7 @@ const config = {
   width: constants.WIDTH,
   height: constants.HEIGHT,
   parent: 'content',
-  zoom: 2,
+  zoom: 5,
   pixelArt: true,
   physics: {
     default: 'arcade',
