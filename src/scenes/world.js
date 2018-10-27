@@ -16,7 +16,7 @@ class WorldScene extends Phaser.Scene {
     const grass = map.createStaticLayer('Grass', tiles, 0, 0);
     const obstacles = map.createStaticLayer('Obstacles', tiles, 0, 0);
     obstacles.setCollisionByExclusion([-1]);
-    this.player = this.physics.add.sprite(50, 100, 'player', constants.SPRITES.SNOW.DOWN[0]);
+    this.player = this.physics.add.sprite(100, 100, 'kaid', 'walk/body/human/down/4');
     this.physics.world.bounds.width = map.widthInPixels;
     this.physics.world.bounds.height = map.heightInPixels;
     this.player.setCollideWorldBounds(true);
@@ -26,11 +26,16 @@ class WorldScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player);
     this.cameras.main.roundPixels = true;
 
+    const frames = this.anims.generateFrameNames('kaid', {
+      start: 1,
+      end: 8,
+      zeroPad: 4,
+      prefix: 'walk/body/human/left/',
+    });
+    console.log(frames);
     this.anims.create({
       key: 'left',
-      frames: this.anims.generateFrameNumbers('player', {
-        frames: constants.SPRITES.SNOW.LEFT_RIGHT,
-      }),
+      frames,
       frameRate: 10,
       repeat: -1,
     });

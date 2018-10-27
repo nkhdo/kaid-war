@@ -3,6 +3,8 @@ import Phaser from 'phaser';
 import mapData from '../assets/map/map.json';
 import mapSpritesheet from '../assets/map/spritesheet.png';
 import charSpritesheet from '../assets/characters/spritesheet.png';
+import kaidTexture from '../assets/characters/kaid.png';
+import kaidAtlas from '../assets/characters/kaid.json';
 
 class BootScene extends Phaser.Scene {
   constructor() {
@@ -11,16 +13,13 @@ class BootScene extends Phaser.Scene {
     });
   }
   preload() {
-    // map tiles
     this.load.image('tiles', mapSpritesheet);
-    // map in json format
     this.load.tilemapTiledJSON('map', mapData);
-    // our two characters
     this.load.spritesheet('player', charSpritesheet, {
       frameWidth: 16,
       frameHeight: 16,
     });
-    window.console.log('loaded');
+    this.load.atlas('kaid', kaidTexture, kaidAtlas);
   }
   create() {
     this.scene.start('WorldScene');
