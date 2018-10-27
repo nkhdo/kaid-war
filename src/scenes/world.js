@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import constants from '../config/constants';
+import createFrames from '../utils/create_frames';
 
 class WorldScene extends Phaser.Scene {
   constructor() {
@@ -16,7 +16,7 @@ class WorldScene extends Phaser.Scene {
     const grass = map.createStaticLayer('Grass', tiles, 0, 0);
     const obstacles = map.createStaticLayer('Obstacles', tiles, 0, 0);
     obstacles.setCollisionByExclusion([-1]);
-    this.player = this.physics.add.sprite(100, 100, 'kaid', 'walk/body/human/down/4');
+    this.player = this.physics.add.sprite(100, 100, 'kaid', 'walk/body/human/down/4.png');
     this.physics.world.bounds.width = map.widthInPixels;
     this.physics.world.bounds.height = map.heightInPixels;
     this.player.setCollideWorldBounds(true);
@@ -26,43 +26,18 @@ class WorldScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player);
     this.cameras.main.roundPixels = true;
 
-    const frames = this.anims.generateFrameNames('kaid', {
-      start: 1,
-      end: 8,
-      zeroPad: 4,
-      prefix: 'walk/body/human/left/',
-    });
-    console.log(frames);
     this.anims.create({
-      key: 'left',
-      frames,
-      frameRate: 10,
-      repeat: -1,
+      key: 'left', frames: createFrames('walk/body/human/left', 1, 8), frameRate: 10, repeat: -1,
     });
     // animation with key 'right'
     this.anims.create({
-      key: 'right',
-      frames: this.anims.generateFrameNumbers('player', {
-        frames: constants.SPRITES.SNOW.LEFT_RIGHT,
-      }),
-      frameRate: 10,
-      repeat: -1,
+      key: 'right', frames: createFrames('walk/body/human/right', 1, 8), frameRate: 10, repeat: -1,
     });
     this.anims.create({
-      key: 'up',
-      frames: this.anims.generateFrameNumbers('player', {
-        frames: constants.SPRITES.SNOW.UP,
-      }),
-      frameRate: 10,
-      repeat: -1,
+      key: 'up', frames: createFrames('walk/body/human/up', 1, 8), frameRate: 10, repeat: -1,
     });
     this.anims.create({
-      key: 'down',
-      frames: this.anims.generateFrameNumbers('player', {
-        frames: constants.SPRITES.SNOW.DOWN,
-      }),
-      frameRate: 10,
-      repeat: -1,
+      key: 'down', frames: createFrames('walk/body/human/down', 1, 8), frameRate: 10, repeat: -1,
     });
 
     this.spawns = this.physics.add.group({ classType: Phaser.GameObjects.Zone });
@@ -92,10 +67,8 @@ class WorldScene extends Phaser.Scene {
     }
 
     if (this.cursors.left.isDown) {
-      this.player.flipX = true;
       this.player.anims.play('left', true);
     } else if (this.cursors.right.isDown) {
-      this.player.flipX = false;
       this.player.anims.play('right', true);
     } else if (this.cursors.up.isDown) {
       this.player.anims.play('up', true);
