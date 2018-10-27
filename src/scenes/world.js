@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import createFrames from '../utils/create_frames';
+import Character from '../libs/character';
 
 class WorldScene extends Phaser.Scene {
   constructor() {
@@ -10,13 +11,14 @@ class WorldScene extends Phaser.Scene {
   }
 
   create() {
+    Character.registerAnimations(this);
     const map = this.make.tilemap({ key: 'map' });
     const tiles = map.addTilesetImage('spritesheet', 'tiles');
 
     const grass = map.createStaticLayer('Grass', tiles, 0, 0);
     const obstacles = map.createStaticLayer('Obstacles', tiles, 0, 0);
     obstacles.setCollisionByExclusion([-1]);
-    this.player = this.physics.add.sprite(100, 100, 'kaid', 'walk/body/human/down/4.png');
+    this.player = this.physics.add.sprite(100, 100, 'kaid', 'walk/body/human/down/0');
     this.physics.world.bounds.width = map.widthInPixels;
     this.physics.world.bounds.height = map.heightInPixels;
     this.player.setCollideWorldBounds(true);
@@ -25,6 +27,8 @@ class WorldScene extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.cameras.main.startFollow(this.player);
     this.cameras.main.roundPixels = true;
+
+    const cg = new Character(this, 100, 200);
 
     this.anims.create({
       key: 'left', frames: createFrames('walk/body/human/left', 1, 8), frameRate: 10, repeat: -1,
