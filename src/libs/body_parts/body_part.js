@@ -14,23 +14,16 @@ class BodyPart {
     }
   }
 
-  animate(animation, direction, loop = false) {
+  animate(animation, direction) {
     if (!this.sprite) {
       return;
     }
-    const animationName = `${animation}/${this.type}/${this.name}/${direction}`;
-    // check if the animation exists
-    const anim = this.scene.anims.get(animationName);
-    if (anim) {
-      this.sprite.anims.play(animationName, loop);
-    } else {
-      this.stopAnimating();
-      this.sprite.setFrame(this.idleFrame);
+    if (animation === 'hurt') {
+      this.hurt();
+      return;
     }
-  }
-
-  stopAnimating() {
-    this.sprite.anims.stop();
+    const animationName = `${animation}/${this.type}/${this.name}/${direction}`;
+    this.checkAndPlay(animationName);
   }
 
   hurt() {
@@ -38,17 +31,29 @@ class BodyPart {
       return;
     }
     const animationName = `hurt/${this.type}/${this.name}`;
-    this.sprite.anims.play(animationName);
+    this.checkAndPlay(animationName);
   }
+
+  checkAndPlay(animationName) {
+    const anim = this.scene.anims.get(animationName);
+    if (anim) {
+      this.sprite.anims.play(animationName);
+    } else {
+      this.stopAnimation();
+      this.sprite.setFrame('transparent');
+    }
+  }
+
+  stopAnimation() {
+    this.sprite.anims.stop();
+  }
+
 
   getIdleFrame() {
     const frameName = `walk/${this.type}/${this.name}/down/0`;
     // check if frame exits
-    const frame = this.scene.textures.get('kaid', frameName);
-    if (frame) {
-      return frameName;
-    }
-    return 'transparent';
+    const texture = this.scene.textures.get('kaid');
+    return texture.has(frameName) ? frameName : 'transparent';
   }
 }
 

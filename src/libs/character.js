@@ -13,7 +13,7 @@ class Character {
   constructor(scene, x, y) {
     this.scene = scene;
 
-    this.behind = new Behind(this.scene, 'quiver');
+    this.behind = new Behind(this.scene, null);
     this.behind.render(x, y);
     this.body = new Body(this.scene, 'human');
     this.body.render(x, y);
@@ -44,7 +44,7 @@ class Character {
       this.weapon,
     ];
 
-    this.animate('walk', 'down', true);
+    this.animate('hurt', 'down');
   }
 
   animate(animation, direction, loop = false) {
@@ -71,7 +71,7 @@ Character.registerAnimations = (scene) => {
         key,
         frames: createFrames(key, 1, framesCount - 1),
         frameRate: 10,
-        repeat: -1,
+        repeat: 0,
       });
     }
   });
