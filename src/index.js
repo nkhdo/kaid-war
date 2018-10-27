@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 
 import constants from './config/constants';
-// import GameScene from './scenes/game';
 import BootScene from './scenes/boot';
 import WorldScene from './scenes/world';
 
@@ -16,7 +15,7 @@ const config = {
     default: 'arcade',
     arcade: {
       gravity: { y: 0 },
-      debug: true,
+      debug: process.env.NODE_ENV === 'development',
     },
   },
   scene: [BootScene, WorldScene],

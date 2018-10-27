@@ -8,29 +8,24 @@ import Head from './body_parts/head';
 import Hands from './body_parts/hands';
 import Weapon from './body_parts/weapon';
 import createFrames from '../utils/create_frames';
+import constants from '../config/constants';
 
 class Character {
   constructor(scene, x, y) {
     this.scene = scene;
+    this.container = this.scene.add.container(x, y);
+    this.scene.physics.add.existing(this.container);
+    this.container.body.setCircle(32);
 
-    this.behind = new Behind(this.scene, null);
-    this.behind.render(x, y);
-    this.body = new Body(this.scene, 'human');
-    this.body.render(x, y);
-    this.feet = new Feet(this.scene, 'plate_armor_shoes');
-    this.feet.render(x, y);
-    this.legs = new Legs(this.scene, 'plate_armor_pants');
-    this.legs.render(x, y);
-    this.torso = new Torso(this.scene, 'chain_armor_torso');
-    this.torso.render(x, y);
-    this.belt = new Belt(this.scene, 'leather');
-    this.belt.render(x, y);
-    this.head = new Head(this.scene, 'plate_armor_helmet');
-    this.head.render(x, y);
-    this.hands = new Hands(this.scene, 'plate_armor_gloves');
-    this.hands.render(x, y);
-    this.weapon = new Weapon(this.scene, 'shield_cutout_chain_armor_helmet');
-    this.weapon.render(x, y);
+    this.behind = new Behind(this, 'quiver');
+    this.body = new Body(this, 'human');
+    this.feet = new Feet(this, 'plate_armor_shoes');
+    this.legs = new Legs(this, 'plate_armor_pants');
+    this.torso = new Torso(this, 'chain_armor_torso');
+    this.belt = new Belt(this, 'leather');
+    this.head = new Head(this, 'plate_armor_helmet');
+    this.hands = new Hands(this, 'plate_armor_gloves');
+    this.weapon = new Weapon(this, 'bow');
 
     this.parts = [
       this.behind,
@@ -44,7 +39,7 @@ class Character {
       this.weapon,
     ];
 
-    this.animate('hurt', 'down');
+    this.animate('walk', 'down');
   }
 
   animate(animation, direction, loop = false) {
@@ -55,6 +50,8 @@ class Character {
 Character.registerAnimations = (scene) => {
   const { animations } = scene.cache.json.get('kaidStats');
   animations.forEach(([key, framesCount, isMulti]) => {
+    const frameRate = constants.ANIMATION_FRAME_RATE;
+    const repeat = key.startsWith('walk') ? -1 : 0;
     // isMulti: the animation has 4 directions (up/down/left/right)
     if (isMulti) {
       ['up', 'down', 'left', 'right'].forEach((direction) => {
@@ -62,16 +59,16 @@ Character.registerAnimations = (scene) => {
         scene.anims.create({
           key: dKey,
           frames: createFrames(dKey, 1, framesCount - 1),
-          frameRate: 10,
-          repeat: -1,
+          frameRate,
+          repeat,
         });
       });
     } else {
       scene.anims.create({
         key,
         frames: createFrames(key, 1, framesCount - 1),
-        frameRate: 10,
-        repeat: 0,
+        frameRate,
+        repeat,
       });
     }
   });

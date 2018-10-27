@@ -1,8 +1,8 @@
 import BodyPart from './body_part';
 
 class Head extends BodyPart {
-  constructor(scene, name) {
-    super(scene, name, 'head', 6);
+  constructor(owner, name) {
+    super(owner, name, 'head', 6);
   }
 }
 

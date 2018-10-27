@@ -1,17 +1,13 @@
 class BodyPart {
-  constructor(scene, name, type, layer) {
-    this.scene = scene;
+  constructor(owner, name, type, layer) {
+    this.owner = owner;
+    this.scene = this.owner.scene;
     this.name = name;
     this.type = type;
     this.layer = layer;
-    this.sprite = null;
     this.idleFrame = this.getIdleFrame();
-  }
-
-  render(x, y) {
-    if (!this.sprite) {
-      this.sprite = this.scene.physics.add.sprite(x, y, 'kaid', this.idleFrame);
-    }
+    this.sprite = this.scene.add.sprite(32, 32, 'kaid', this.idleFrame);
+    this.owner.container.addAt(this.sprite, this.layer);
   }
 
   animate(animation, direction) {
