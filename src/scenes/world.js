@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import createFrames from '../utils/create_frames';
 import Character from '../libs/character';
 
 class WorldScene extends Phaser.Scene {
@@ -14,81 +13,53 @@ class WorldScene extends Phaser.Scene {
     Character.registerAnimations(this);
     const map = this.make.tilemap({ key: 'map' });
     const tiles = map.addTilesetImage('spritesheet', 'tiles');
-
-    const grass = map.createStaticLayer('Grass', tiles, 0, 0);
+    map.createStaticLayer('Grass', tiles, 0, 0);
     const obstacles = map.createStaticLayer('Obstacles', tiles, 0, 0);
     obstacles.setCollisionByExclusion([-1]);
-    this.player = this.physics.add.sprite(100, 100, 'kaid', 'walk/body/human/down/0');
+
+    this.player = new Character(this, 50, 50, {
+      head: 'robe_hood',
+      legs: 'pants_greenish',
+      belt: 'rope',
+      body: 'skeleton',
+    });
     this.physics.world.bounds.width = map.widthInPixels;
     this.physics.world.bounds.height = map.heightInPixels;
-    this.player.setCollideWorldBounds(true);
-    this.physics.add.collider(this.player, obstacles);
+    this.player.sprites.body.setCollideWorldBounds(true);
+    this.physics.add.collider(this.player.sprites, obstacles);
     this.cursors = this.input.keyboard.createCursorKeys();
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-    this.cameras.main.startFollow(this.player);
+    this.cameras.main.startFollow(this.player.sprites);
     this.cameras.main.roundPixels = true;
-
-    const cg = new Character(this, 100, 200);
-
-    this.anims.create({
-      key: 'left', frames: createFrames('walk/body/human/left', 1, 8), frameRate: 10, repeat: -1,
-    });
-    // animation with key 'right'
-    this.anims.create({
-      key: 'right', frames: createFrames('walk/body/human/right', 1, 8), frameRate: 10, repeat: -1,
-    });
-    this.anims.create({
-      key: 'up', frames: createFrames('walk/body/human/up', 1, 8), frameRate: 10, repeat: -1,
-    });
-    this.anims.create({
-      key: 'down', frames: createFrames('walk/body/human/down', 1, 8), frameRate: 10, repeat: -1,
-    });
-
-    this.spawns = this.physics.add.group({ classType: Phaser.GameObjects.Zone });
-    for (let i = 0; i < 30; i++) {
-      const x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
-      const y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
-      // parameters are x, y, width, height
-      this.spawns.create(x, y, 20, 20);
-    }
-    this.physics.add.overlap(this.player, this.spawns, this.onMeetEnemy, false, this);
   }
   update(time, delta) {
-    this.player.body.setVelocity(0);
+    this.player.sprites.body.setVelocity(0);
 
     // Horizontal movement
     if (this.cursors.left.isDown) {
-      this.player.body.setVelocityX(-80);
+      this.player.sprites.body.setVelocityX(-100);
     } else if (this.cursors.right.isDown) {
-      this.player.body.setVelocityX(80);
+      this.player.sprites.body.setVelocityX(100);
     }
 
     // Vertical movement
     if (this.cursors.up.isDown) {
-      this.player.body.setVelocityY(-80);
+      this.player.sprites.body.setVelocityY(-100);
     } else if (this.cursors.down.isDown) {
-      this.player.body.setVelocityY(80);
+      this.player.sprites.body.setVelocityY(100);
     }
 
     if (this.cursors.left.isDown) {
-      this.player.anims.play('left', true);
+      this.player.animate('walk', 'left');
     } else if (this.cursors.right.isDown) {
-      this.player.anims.play('right', true);
+      this.player.animate('walk', 'right');
     } else if (this.cursors.up.isDown) {
-      this.player.anims.play('up', true);
+      this.player.animate('walk', 'up');
     } else if (this.cursors.down.isDown) {
-      this.player.anims.play('down', true);
+      this.player.animate('walk', 'down');
     } else {
-      this.player.anims.stop();
+      this.player.stopAnimation();
     }
-  }
-
-  onMeetEnemy(player, zone) {
-    // we move the zone to some other location
-    zone.x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
-    zone.y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
-    // shake the world
-    this.cameras.main.flash(100);
   }
 }
 

@@ -7,7 +7,7 @@ class BodyPart {
     this.layer = layer;
     this.idleFrame = this.getIdleFrame();
     this.sprite = this.scene.add.sprite(32, 32, 'kaid', this.idleFrame);
-    this.owner.container.addAt(this.sprite, this.layer);
+    this.owner.sprites.addAt(this.sprite, this.layer);
   }
 
   animate(animation, direction) {
@@ -33,7 +33,7 @@ class BodyPart {
   checkAndPlay(animationName) {
     const anim = this.scene.anims.get(animationName);
     if (anim) {
-      this.sprite.anims.play(animationName);
+      this.sprite.anims.play(animationName, true);
     } else {
       this.stopAnimation();
       this.sprite.setFrame('transparent');

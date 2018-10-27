@@ -11,21 +11,31 @@ import createFrames from '../utils/create_frames';
 import constants from '../config/constants';
 
 class Character {
-  constructor(scene, x, y) {
+  constructor(scene, x, y, {
+    behind = null,
+    body = 'human',
+    feet = null,
+    legs = null,
+    torso = null,
+    belt = null,
+    head = null,
+    hands = null,
+    weapon = null,
+  } = {}) {
     this.scene = scene;
-    this.container = this.scene.add.container(x, y);
-    this.scene.physics.add.existing(this.container);
-    this.container.body.setCircle(32);
+    this.sprites = this.scene.add.container(x, y);
+    this.scene.physics.add.existing(this.sprites);
+    this.sprites.body.setCircle(32);
 
-    this.behind = new Behind(this, 'quiver');
-    this.body = new Body(this, 'human');
-    this.feet = new Feet(this, 'plate_armor_shoes');
-    this.legs = new Legs(this, 'plate_armor_pants');
-    this.torso = new Torso(this, 'chain_armor_torso');
-    this.belt = new Belt(this, 'leather');
-    this.head = new Head(this, 'plate_armor_helmet');
-    this.hands = new Hands(this, 'plate_armor_gloves');
-    this.weapon = new Weapon(this, 'bow');
+    this.behind = new Behind(this, behind);
+    this.body = new Body(this, body);
+    this.feet = new Feet(this, feet);
+    this.legs = new Legs(this, legs);
+    this.torso = new Torso(this, torso);
+    this.belt = new Belt(this, belt);
+    this.head = new Head(this, head);
+    this.hands = new Hands(this, hands);
+    this.weapon = new Weapon(this, weapon);
 
     this.parts = [
       this.behind,
@@ -44,6 +54,10 @@ class Character {
 
   animate(animation, direction, loop = false) {
     this.parts.forEach(part => part.animate(animation, direction, loop));
+  }
+
+  stopAnimation() {
+    this.parts.forEach(part => part.stopAnimation());
   }
 }
 
